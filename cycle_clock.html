@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.js"></script>
+  <script language="javascript" type="text/javascript">
+    let wid = 800;
+    let hei = 800;
+    let numBlocks = 6;
+    let siz = (wid - 2) / (2 + numBlocks);
+    let days_in_mo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let rs = [238, 110, 255, 255, 187, 152];
+    let gs = [130, 170, 160, 100, 162, 251];
+    let bs = [238, 220, 122, 120, 256, 152];
+    let begs = [];
+    let sc = .25;
+    let show_text = true;
+    let show_fracs = true;
+    let showTextButton;
+    let showFracsButton;
+
+    function setup() {
+      createCanvas(wid, hei);
+      for (let i = 0; i < numBlocks; i++) {
+        begs[i] = map(i, 0, numBlocks - 1, 800, 250);
+      }
+
+      showTextButton = createButton("Toggle Text");
+      showTextButton.position(650, 760);
+      showTextButton.mousePressed(toggleShowText);
+
+      showFracsButton = createButton("Toggle Fracs");
+      showFracsButton.position(20, 760);
+      showFracsButton.mousePressed(toggleShowFracs);
+    }
+
+    function draw() {
+      background(71);
+
+      se = second();
+      mi = minute();
+      ho = hour();
+      is_pm = ho > 12;
+      da = day();
+      mo = month();
+      ye = year();
+      let dmo = days_in_mo[mo - 1];
+      let nums = [ye, mo, da, ho, mi, se];
+      let bnds = [[1988, 2108], [0, 12], [0, dmo], [0, 12], [0, 60], [0, 60]];
+      let rngs = [10, 1, 1, 1, 5, 5];
+
+      push();
+      translate(wid / 2, hei / 2);
+      rotate(-PI / 2);
+      noStroke();
+      for (let i = 0; i < numBlocks; i++) {
+        fill(rs[i] * sc, gs[i] * sc, bs[i] * sc);
+        ellipse(0, 0, begs[i], begs[i]);
+      }
+
+      for (let i = 0; i < numBlocks; i++) {
+        fill(rs[i] * sc, gs[i] * sc, bs[i] * sc);
+        ellipse(0, 0, begs[i], begs[i]);
+
+        let a = map(nums[i], bnds[i][0], bnds[i][1], 0, TWO_PI);
+        let delta = 0;
+        if (i < (numBlocks - 1) && show_fracs) {
+          if (i == 2 && is_pm) delta = 12;
+          a += map(nums[i + 1], bnds[i + 1][0], bnds[i + 1][1] + delta, 0, TWO_PI / bnds[i][1]);
+        }
+
+        fill(rs[i], gs[i], bs[i]);
+        if (a != 0) { arc(0, 0, begs[i], begs[i], 0, a); }
+        for (let j = i + 1; j < numBlocks; j++) {
+          fill(rs[j] * sc, gs[j] * sc, bs[j] * sc);
+          arc(0, 0, begs[j], begs[j], 0, a + .1);
+        }
+
+        noFill();
+        stroke(0);
+        ellipse(0, 0, begs[i], begs[i]);
+        push();
+        stroke(0);
+        rotate(PI / 2);
+        for (let ii = 0; ii < bnds[i][1]; ii += rngs[i]) {
+          rotate(TWO_PI * (rngs[i] / (bnds[i][1] - bnds[i][0])));
+          line(0, -1 * (.5 * begs[i] - (begs[0] - begs[1]) * .5), 0, -1 * (.5 * begs[i]));
+        }
+        pop();
+      }
+
+      fill(71);
+      ellipse(0, 0, begs[5] - siz, begs[5] - siz);
+      pop();
+
+      if (show_text) {
+        fill(190);
+        textSize(25);
+        textAlign(RIGHT);
+        for (let i = 0; i < numBlocks; i++) {
+          let a_frac = 0;
+          if (i < (numBlocks - 1))
+            a_frac = map(nums[i + 1], bnds[i + 1][0], bnds[i + 1][1], 0, 1 / bnds[i + 1][1]);
+          let a = map(nums[i], bnds[i][0], bnds[i][1], 0, 1) + a_frac;
+          if (i != 3) { text(nums[i], wid / 2 - 7, hei - begs[i] / 2 - 362); }
+          else { text(nums[i] % 12, wid / 2 - 7, hei - begs[i] / 2 - 362); }
+        }
+      }
+    }
+
+    function toggleShowText() {
+      show_text = !show_text;
+    }
+
+    function toggleShowFracs() {
+      show_fracs = !show_fracs;
+    }
+
+  </script>
+  <style>
+    body {
+      padding: 20;
+      margin: 20;
+      background: rgb(71, 71, 71)
+    }
+
+    button {
+      padding: 8px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+</body>
+
+</html>
