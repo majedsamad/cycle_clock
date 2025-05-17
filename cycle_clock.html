@@ -17,22 +17,12 @@
     let sc = .25;
     let show_text = true;
     let show_fracs = true;
-    let showTextButton;
-    let showFracsButton;
 
     function setup() {
       createCanvas(wid, hei);
       for (let i = 0; i < numBlocks; i++) {
         begs[i] = map(i, 0, numBlocks - 1, 800, 250);
       }
-
-      showTextButton = createButton("Toggle Text");
-      showTextButton.position(650, 760);
-      showTextButton.mousePressed(toggleShowText);
-
-      showFracsButton = createButton("Toggle Fracs");
-      showFracsButton.position(20, 760);
-      showFracsButton.mousePressed(toggleShowFracs);
     }
 
     function draw() {
@@ -116,6 +106,14 @@
       show_fracs = !show_fracs;
     }
 
+    function mousePressed() {
+      let d = dist(mouseX, mouseY, wid / 2, hei / 2);
+      if (d <= (begs[5] - siz) / 2) {
+        toggleShowFracs();
+      } else {
+        toggleShowText();
+      }
+    }
   </script>
   <style>
     body {
